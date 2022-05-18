@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+  adasit-bootstrap-postgres:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: "P@ssw0rd"
+      POSTGRES_DB: "adasit.bootstrap"
+    networks:
+      - adasit-bootstrap-network
+
+  adasit-bootstrap-pgadmin:
+    image: dpage/pgadmin4
+    ports:
+      - "16543:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "admin@adasit.com"
+      PGADMIN_DEFAULT_PASSWORD: "P@ssw0rd"
+    networks:
+      - adasit-bootstrap-network
+    depends_on:
+      - adasit-bootstrap-postgres
+
+  adasit-bootstrap-schema:
+    image: flyway/flyway
+    command: -configFiles=/flyway/conf/flyway.conf -locations=filesystem:/flyway/sql -connectRetries=60 migrate
+    volumes:
+      - ../database/dev-data:/flyway/sql
+      - ../drivers:/flyway/drivers
+      - ../database/conf:/flyway/conf
+    depends_on:
+      - adasit-bootstrap-postgres
+    networks:
+      - adasit-bootstrap-network
+
+networks:
+  adasit-bootstrap-network:
+    driver: bridge
