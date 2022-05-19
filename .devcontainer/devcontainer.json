@@ -11,29 +11,22 @@
 
 	// Set *default* container specific settings.json values on container create.
 	"settings": {
-		"mssql.connections": [
-			{
-				"server": "localhost,1433",
-				"database": "",
-				"authenticationType": "SqlLogin",
-				"user": "sa",
-				"password": "P@ssw0rd",
-				"emptyPasswordInput": false,
-				"savePassword": false,
-				"profileName": "mssql-container"
-			}
-		]
+		"editor.formatOnSave": true
 	},
 
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
 		"ms-dotnettools.csharp",
-		"ms-mssql.mssql",
 		"fernandoescolar.vscode-solution-explorer",
 		"esbenp.prettier-vscode",
 		"patcx.vscode-nuget-gallery",
-		"jmrog.vscode-nuget-package-manager",
-	],
+		"kreativ-software.csharpextensions",
+		"rangav.vscode-thunder-client",
+		"Fudge.auto-using",
+		"PKief.material-icon-theme",
+		"eamodio.gitlens",
+		"zhuangtongfa.Material-theme"
+	]
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [5000, 5001],
@@ -58,6 +51,4 @@
 	//      3. Open a terminal in VS Code and run "mkdir -p /home/vscode/.aspnet/https && mv aspnetapp.pfx /home/vscode/.aspnet/https"
 
 	// postCreateCommand.sh parameters: $1=SA password, $2=dacpac path, $3=sql script(s) path
-	"postCreateCommand": "bash .devcontainer/mssql/postCreateCommand.sh 'P@ssw0rd' './bin/Debug/' './.devcontainer/mssql/'"
-
 }

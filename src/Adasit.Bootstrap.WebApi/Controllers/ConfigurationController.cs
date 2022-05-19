@@ -32,8 +32,8 @@ public class ConfigurationsController : BaseController
 
     [HttpPost]
     [ProducesResponseType(typeof(DefaultResponseDto<ConfigurationOutputDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(DefaultResponseDto<ConfigurationOutputDto>), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(DefaultResponseDto<ConfigurationOutputDto>), StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(typeof(DefaultResponseDto<object>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(DefaultResponseDto<object>), StatusCodes.Status422UnprocessableEntity)]
     public async Task<IActionResult> Create(
         [FromBody] RegisterConfigurationInputDto apiDto,
         CancellationToken cancellationToken
@@ -41,7 +41,7 @@ public class ConfigurationsController : BaseController
     {
         if (apiDto == null)
         {
-            return UnprocessableEntity(new DefaultResponseDto<ConfigurationOutputDto>());
+            return UnprocessableEntity(new DefaultResponseDto<object>());
         }
 
         var entity = new RegisterConfigurationInput(apiDto);
@@ -53,8 +53,8 @@ public class ConfigurationsController : BaseController
 
     [HttpPatch("{id:guid}")]
     [ProducesResponseType(typeof(DefaultResponseDto<ConfigurationOutputDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(DefaultResponseDto<ConfigurationOutputDto>), StatusCodes.Status422UnprocessableEntity)]
-    [ProducesResponseType(typeof(DefaultResponseDto<ConfigurationOutputDto>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(DefaultResponseDto<object>), StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(typeof(DefaultResponseDto<object>), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> PatchConfiguration(
         [FromBody] JsonPatchDocument<ModifyConfigurationInputDto> apiDto,
         [FromRoute] Guid id,
@@ -63,7 +63,7 @@ public class ConfigurationsController : BaseController
     {
         if(apiDto == null)
         {
-            return UnprocessableEntity(new DefaultResponseDto<ConfigurationOutputDto>());
+            return UnprocessableEntity(new DefaultResponseDto<object>());
         }
 
         var input = apiDto.MapDtoToInput();
@@ -78,8 +78,8 @@ public class ConfigurationsController : BaseController
     
     [HttpPut("{id:guid}")]
     [ProducesResponseType(typeof(DefaultResponseDto<ConfigurationOutputDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(DefaultResponseDto<ConfigurationOutputDto>), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(DefaultResponseDto<ConfigurationOutputDto>), StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(typeof(DefaultResponseDto<object>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(DefaultResponseDto<object>), StatusCodes.Status422UnprocessableEntity)]
     public async Task<IActionResult> Update(
         [FromBody] ModifyConfigurationInputDto apiInput,
         [FromRoute] Guid id,

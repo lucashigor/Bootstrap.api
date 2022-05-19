@@ -40,7 +40,6 @@ public class RegisterConfigurationCommand : BaseCommands, IRequestHandler<Regist
 {
     public IConfigurationRepository repository;
     public IUnitOfWork unitOfWork;
-    public Notifier notifier;
     public IDateValidationHandler dateValidationHandler;
 
     public RegisterConfigurationCommand(IConfigurationRepository repository,
@@ -50,7 +49,6 @@ public class RegisterConfigurationCommand : BaseCommands, IRequestHandler<Regist
     {
         this.repository = repository;
         this.unitOfWork = unitOfWork;
-        this.notifier = notifier;
         this.dateValidationHandler = dateValidationHandler;
     }
 

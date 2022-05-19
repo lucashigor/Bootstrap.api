@@ -18,7 +18,6 @@ public class ChangeConfigurationCommand : BaseCommands, IRequestHandler<ModifyCo
     private readonly IUnitOfWork unitOfWork;
     private readonly IDateValidationHandler dateValidationHandler;
     private readonly IMediator mediator;
-    private readonly Notifier notifier;
 
     public ChangeConfigurationCommand(IConfigurationRepository repository,
         IUnitOfWork unitOfWork,
@@ -27,7 +26,6 @@ public class ChangeConfigurationCommand : BaseCommands, IRequestHandler<ModifyCo
         Notifier notifier) : base(notifier)
     {
         this.repository = repository;
-        this.notifier = notifier;
         this.unitOfWork = unitOfWork;
         this.dateValidationHandler = dateValidationHandler;
         this.mediator = mediator;
