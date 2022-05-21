@@ -1,10 +1,12 @@
 ﻿namespace Adasit.Bootstrap.Application.UseCases.Configurations.Commands;
 
-using Adasit.Bootstrap.Application.Dto;
+using Adasit.Bootstrap.Application.Dto.Models.Errors;
+using Adasit.Bootstrap.Application.Dto.Models.Events;
 using Adasit.Bootstrap.Application.Dto.Models.Request;
 using Adasit.Bootstrap.Application.Dto.Models.Response;
 using Adasit.Bootstrap.Application.Interfaces;
 using Adasit.Bootstrap.Application.Models;
+using Adasit.Bootstrap.Application.Notifications;
 using Adasit.Bootstrap.Domain.Conts;
 using Adasit.Bootstrap.Domain.Entity;
 using Adasit.Bootstrap.Domain.Exceptions;
@@ -38,18 +40,21 @@ public class RegisterConfigurationInput : IRequest<ConfigurationOutputDto>
 
 public class RegisterConfigurationCommand : BaseCommands, IRequestHandler<RegisterConfigurationInput, ConfigurationOutputDto>
 {
-    public IConfigurationRepository repository;
-    public IUnitOfWork unitOfWork;
-    public IDateValidationHandler dateValidationHandler;
+    private readonly IConfigurationRepository repository;
+    private readonly IUnitOfWork unitOfWork;
+    private readonly IDateValidationHandler dateValidationHandler;
+    private readonly IMediator mediator;
 
     public RegisterConfigurationCommand(IConfigurationRepository repository,
         IUnitOfWork unitOfWork,
         Notifier notifier,
-        IDateValidationHandler dateValidationHandler) : base(notifier)
+        IDateValidationHandler dateValidationHandler,
+        IMediator mediator) : base(notifier)
     {
         this.repository = repository;
         this.unitOfWork = unitOfWork;
         this.dateValidationHandler = dateValidationHandler;
+        this.mediator = mediator;
     }
 
     public async Task<ConfigurationOutputDto> Handle(RegisterConfigurationInput request, CancellationToken cancellationToken)
@@ -83,21 +88,19 @@ public class RegisterConfigurationCommand : BaseCommands, IRequestHandler<Regist
                 try
                 {
                     item.FixStartDate();
-                    notifier.Warnings.Add(ErrorCodeConstant.StartDateCannotBeBeforeToToday());
+                    notifier.Warnings.Add(ErrorCodeConstant.StartDateCannotBeBeforeToUtcNow());
                 }
                 catch (EntityGenericException ex)
                 {
                     if (ex.Code.Contains(ErrorsCodes.ConfigurationDateConflit))
                     {
-                        notifier.Erros.Add(ErrorCodeConstant.StartDateCannotBeBeforeToToday());
+                        notifier.Erros.Add(ErrorCodeConstant.StartDateCannotBeBeforeToUtcNow());
 
                         return null!;
                     }
-
                     throw;
                 }
             }
-
 
             await dateValidationHandler.Handle(item, cancellationToken);
 
@@ -107,6 +110,11 @@ public class RegisterConfigurationCommand : BaseCommands, IRequestHandler<Regist
             }
 
             await repository.Insert(item, cancellationToken);
+
+            var message = new DefaultMessageNotification(EventNames.ConfigurationCreated, item);
+
+            await mediator.Publish(new PublishNotificationsEvents(TopicNames.Bootstrap_Topic, message), cancellationToken);
+
             await unitOfWork.CommitAsync(cancellationToken);
 
             return new ConfigurationOutputDto(item.Id, item.Name, item.Value, item.Description, item.StartDate, item.FinalDate);

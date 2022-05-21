@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Adasit.Bootstrap.Application.Dto;
+using Adasit.Bootstrap.Application.Dto.Models.Errors;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.JsonPatch.Operations;
 

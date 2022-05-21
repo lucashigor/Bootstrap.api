@@ -1,7 +1,7 @@
 ﻿namespace Adasit.Bootstrap.Application.UseCases.Configurations.Commands;
 using System.Linq;
 using System.Threading.Tasks;
-using Adasit.Bootstrap.Application.Dto;
+using Adasit.Bootstrap.Application.Dto.Models.Errors;
 using Adasit.Bootstrap.Application.Models;
 using Adasit.Bootstrap.Domain.Entity;
 using Adasit.Bootstrap.Domain.Repository;

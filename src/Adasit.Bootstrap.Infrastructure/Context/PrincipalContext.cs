@@ -25,7 +25,6 @@ public class PrincipalContext : DbContext
                 v.Property(k => k.FinalDate);
                 v.Property(k => k.CreatedAt);
                 v.Property(k => k.LastUpdateAt);
-                v.Property(k => k.DeletedAt);
             });
     }
 }

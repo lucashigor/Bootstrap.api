@@ -55,6 +55,7 @@ public class Startup
             .AddUseCases()
             .ConfigureApplicationInfrastructure()
             .AddGlobalExceptionHandlerMiddleware()
+            .AddInfraServices()
             .AddHttpContextAccessor()
             .AddControllers(options =>
             {

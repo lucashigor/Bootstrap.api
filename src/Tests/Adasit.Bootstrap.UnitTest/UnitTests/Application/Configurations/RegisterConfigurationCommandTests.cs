@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Adasit.Bootstrap.Application.Dto;
+using Adasit.Bootstrap.Application.Dto.Models.Errors;
 using Adasit.Bootstrap.Application.Interfaces;
 using Adasit.Bootstrap.Application.Models;
 using Adasit.Bootstrap.Application.UseCases.Configurations.Commands;
@@ -12,6 +12,7 @@ using Adasit.Bootstrap.Domain.Entity;
 using Adasit.Bootstrap.Domain.Repository;
 using Adasit.Bootstrap.UnitTest.UnitTests.Domain.Configurations;
 using FluentAssertions;
+using MediatR;
 using Moq;
 using Xunit;
 
@@ -23,6 +24,7 @@ public class RegisterConfigurationCommandTests
     private readonly Mock<IConfigurationRepository> configurationMock;
     private readonly Mock<IDateValidationHandler> dateValidationMock;
     private readonly Mock<Notifier> notifier;
+    private readonly Mock<IMediator> mediator;
 
     public RegisterConfigurationCommandTests(ConfigurationTestFixture fixture)
     {
@@ -31,6 +33,7 @@ public class RegisterConfigurationCommandTests
         this.configurationMock = new Mock<IConfigurationRepository>();
         this.notifier = new Mock<Notifier>();
         this.dateValidationMock = new Mock<IDateValidationHandler>();
+        this.mediator = new Mock<IMediator>();
     }
 
     [Fact(DisplayName = nameof(HandleRegisterConfigurationCommand_HappyPath_Async))]
@@ -53,7 +56,7 @@ public class RegisterConfigurationCommandTests
             validData
         });
 
-        var app = new RegisterConfigurationCommand(configurationMock.Object, unitOfWorkMock.Object, notifier.Object, dateValidationMock.Object);
+        var app = GetApp();
 
         //Act
         var datetimeBefore = DateTime.UtcNow;
@@ -90,7 +93,7 @@ public class RegisterConfigurationCommandTests
             validData
         });
 
-        var app = new RegisterConfigurationCommand(configurationMock.Object, unitOfWorkMock.Object, notifier.Object, dateValidationMock.Object);
+        var app = GetApp();
 
         //Act
         var datetimeBefore = DateTime.UtcNow;
@@ -107,8 +110,8 @@ public class RegisterConfigurationCommandTests
         notifier.Object.Erros.Should().BeEmpty();
 
         notifier.Object.Warnings.Should().HaveCount(1);
-        notifier.Object.Warnings[0].Code.Should().Be(ErrorCodeConstant.StartDateCannotBeBeforeToToday().Code);
-        notifier.Object.Warnings[0].Message.Should().Be(ErrorCodeConstant.StartDateCannotBeBeforeToToday().Message);
+        notifier.Object.Warnings[0].Code.Should().Be(ErrorCodeConstant.StartDateCannotBeBeforeToUtcNow().Code);
+        notifier.Object.Warnings[0].Message.Should().Be(ErrorCodeConstant.StartDateCannotBeBeforeToUtcNow().Message);
 
         dateValidationMock.Verify(x => x.Handle(It.IsAny<Configuration>(), It.IsAny<CancellationToken>()), Times.Once());
         configurationMock.Verify(x => x.Insert(It.IsAny<Configuration>(), It.IsAny<CancellationToken>()), Times.Once());
@@ -130,7 +133,7 @@ public class RegisterConfigurationCommandTests
             Value = validData.Value,
         };
 
-        var app = new RegisterConfigurationCommand(configurationMock.Object, unitOfWorkMock.Object, notifier.Object, dateValidationMock.Object);
+        var app = GetApp();
 
         //Act
         var result = await app.Handle(item, CancellationToken.None);
@@ -158,7 +161,7 @@ public class RegisterConfigurationCommandTests
             Value = validData.Value,
         };
 
-        var app = new RegisterConfigurationCommand(configurationMock.Object, unitOfWorkMock.Object, notifier.Object, dateValidationMock.Object);
+        var app = GetApp();
 
         //Act
         var result = await app.Handle(item, CancellationToken.None);
@@ -170,5 +173,15 @@ public class RegisterConfigurationCommandTests
         notifier.Object.Erros[0].Code.Should().Be(ErrorCodeConstant.Validation().Code);
         notifier.Object.Erros[0].Message.Should().Be(ErrorCodeConstant.Validation().Message);
         notifier.Object.Erros[0].InnerMessage.Should().Be(ErrorsMessages.BetweenLength.GetMessage(nameof(RegisterConfigurationInput.Name), 3, 100));
+    }
+
+    private RegisterConfigurationCommand GetApp()
+    {
+        return new RegisterConfigurationCommand(
+            configurationMock.Object, 
+            unitOfWorkMock.Object, 
+            notifier.Object, 
+            dateValidationMock.Object,
+            mediator.Object);
     }
 }

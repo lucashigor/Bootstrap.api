@@ -1,7 +1,4 @@
 ﻿namespace Adasit.Bootstrap.Domain.Entity;
-
-using Adasit.Bootstrap.Domain.Conts;
-using Adasit.Bootstrap.Domain.Exceptions;
 using SeedWork;
 using Validation;
 
@@ -73,7 +70,7 @@ public class Configuration : AgregateRoot
         Validate();
     }
 
-    public void FixFinalDate()
+    public void SetFinalDateToNow()
     {
         if (FinalDate > DateTimeOffset.UtcNow)
         {

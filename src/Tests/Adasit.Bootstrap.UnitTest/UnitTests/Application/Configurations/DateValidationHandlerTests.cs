@@ -3,7 +3,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Adasit.Bootstrap.Application.Dto;
+using Adasit.Bootstrap.Application.Dto.Models.Errors;
 using Adasit.Bootstrap.Application.Models;
 using Adasit.Bootstrap.Application.UseCases.Configurations.Commands;
 using Adasit.Bootstrap.Domain.Entity;

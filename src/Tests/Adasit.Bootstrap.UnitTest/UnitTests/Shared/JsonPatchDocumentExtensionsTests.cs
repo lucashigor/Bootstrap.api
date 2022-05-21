@@ -3,10 +3,14 @@ using System;
 using System.Collections.Generic;
 using Adasit.Bootstrap.Application;
 using Adasit.Bootstrap.Application.Dto;
+using Adasit.Bootstrap.Application.Dto.Models;
+using Adasit.Bootstrap.Application.Dto.Models.Errors;
+using Adasit.Bootstrap.Application.Dto.Models.Response;
 using Adasit.Bootstrap.Domain.Entity;
 using FluentAssertions;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.JsonPatch.Operations;
+using Newtonsoft.Json;
 using Xunit;
 
 public class JsonPatchDocumentExtensionsTests

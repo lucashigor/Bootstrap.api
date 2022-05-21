@@ -32,7 +32,6 @@ public class ConfigurationTests
         validData.Should().NotBeNull();
         validData.Id.Should().NotBeEmpty();
         validData.LastUpdateAt.Should().BeNull();
-        validData.DeletedAt.Should().BeNull();
         (validData.CreatedAt > datetimeBefore).Should().BeTrue();
         (validData.CreatedAt < datetimeAfter).Should().BeTrue();
         (validData.StartDate > datetimeBefore).Should().BeTrue();

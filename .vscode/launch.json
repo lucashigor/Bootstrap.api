@@ -9,9 +9,9 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/Adasit.Bootstrap.WebApi/bin/Debug/net6.0/Adasit.Bootstrap.WebApi.dll",
+            "program": "${workspaceFolder}/src/Adasit.Bootstrap.WebApi/bin/Debug/net6.0/Adasit.Bootstrap.WebApi.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/Adasit.Bootstrap.WebApi",
+            "cwd": "${workspaceFolder}/src/Adasit.Bootstrap.WebApi",
             "stopAtEntry": false,
             "serverReadyAction": {
                 "action": "openExternally",

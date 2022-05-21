@@ -20,11 +20,7 @@ public class ConfigurationRepository : IConfigurationRepository
         => await dbset.AddAsync(configuration, cancellationToken);
 
     public async Task<DomainEntity.Configuration> GetById(Guid Id, CancellationToken cancellationToken)
-    {
-        var item = await dbset.FirstOrDefaultAsync(x => x.Id == Id, cancellationToken);
-
-        return item!;
-    }
+        => await dbset.FirstOrDefaultAsync(x => x.Id == Id, cancellationToken);
 
     public Task Update(DomainEntity.Configuration user, CancellationToken cancellationToken)
     {

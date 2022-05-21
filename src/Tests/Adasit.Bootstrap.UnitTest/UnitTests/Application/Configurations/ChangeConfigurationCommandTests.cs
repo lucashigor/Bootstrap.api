@@ -2,10 +2,11 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Adasit.Bootstrap.Application.Dto;
+using Adasit.Bootstrap.Application.Dto.Models.Errors;
 using Adasit.Bootstrap.Application.Dto.Models.Response;
 using Adasit.Bootstrap.Application.Interfaces;
 using Adasit.Bootstrap.Application.Models;
+using Adasit.Bootstrap.Application.Notifications;
 using Adasit.Bootstrap.Application.UseCases.Configurations.Commands;
 using Adasit.Bootstrap.Domain.Conts;
 using Adasit.Bootstrap.Domain.Entity;
@@ -78,7 +79,7 @@ public class ChangeConfigurationCommandTests
             It.IsAny<CancellationToken>()),
             Times.Once());
 
-        mediator.Verify(x => x.Publish(It.IsAny<Configuration>(),
+        mediator.Verify(x => x.Publish(It.IsAny<PublishNotificationsEvents>(),
             It.IsAny<CancellationToken>()),
             Times.Once());
     }
@@ -111,7 +112,7 @@ public class ChangeConfigurationCommandTests
             It.IsAny<CancellationToken>()),
             Times.Once());
 
-        mediator.Verify(x => x.Publish(It.IsAny<Configuration>(),
+        mediator.Verify(x => x.Publish(It.IsAny<PublishNotificationsEvents>(),
             It.IsAny<CancellationToken>()),
             Times.Never());
 
@@ -164,7 +165,7 @@ public class ChangeConfigurationCommandTests
             It.IsAny<CancellationToken>()),
             Times.Once());
 
-        mediator.Verify(x => x.Publish(It.IsAny<Configuration>(),
+        mediator.Verify(x => x.Publish(It.IsAny<PublishNotificationsEvents>(),
             It.IsAny<CancellationToken>()),
             Times.Never());
 
@@ -224,7 +225,7 @@ public class ChangeConfigurationCommandTests
             It.IsAny<CancellationToken>()),
             Times.Once());
 
-        mediator.Verify(x => x.Publish(It.IsAny<Configuration>(),
+        mediator.Verify(x => x.Publish(It.IsAny<PublishNotificationsEvents>(),
             It.IsAny<CancellationToken>()),
             Times.Never());
 
@@ -285,7 +286,7 @@ public class ChangeConfigurationCommandTests
             It.IsAny<CancellationToken>()),
             Times.Once());
 
-        mediator.Verify(x => x.Publish(It.IsAny<Configuration>(),
+        mediator.Verify(x => x.Publish(It.IsAny<PublishNotificationsEvents>(),
             It.IsAny<CancellationToken>()),
             Times.Once());
 
@@ -350,7 +351,7 @@ public class ChangeConfigurationCommandTests
             It.IsAny<CancellationToken>()),
             Times.Once());
 
-        mediator.Verify(x => x.Publish(It.IsAny<Configuration>(),
+        mediator.Verify(x => x.Publish(It.IsAny<PublishNotificationsEvents>(),
             It.IsAny<CancellationToken>()),
             Times.Once());
 
@@ -431,7 +432,7 @@ public class ChangeConfigurationCommandTests
             It.IsAny<CancellationToken>()),
             Times.Once());
 
-        mediator.Verify(x => x.Publish(It.IsAny<Configuration>(),
+        mediator.Verify(x => x.Publish(It.IsAny<PublishNotificationsEvents>(),
             It.IsAny<CancellationToken>()),
             Times.Once());
 
@@ -524,7 +525,7 @@ public class ChangeConfigurationCommandTests
             It.IsAny<CancellationToken>()),
             Times.Once());
 
-        mediator.Verify(x => x.Publish(It.IsAny<Configuration>(),
+        mediator.Verify(x => x.Publish(It.IsAny<PublishNotificationsEvents>(),
             It.IsAny<CancellationToken>()),
             Times.Once());
 
@@ -609,7 +610,7 @@ public class ChangeConfigurationCommandTests
             It.IsAny<CancellationToken>()),
             Times.Once());
 
-        mediator.Verify(x => x.Publish(It.IsAny<Configuration>(),
+        mediator.Verify(x => x.Publish(It.IsAny<PublishNotificationsEvents>(),
             It.IsAny<CancellationToken>()),
             Times.Once());
 
@@ -693,7 +694,7 @@ public class ChangeConfigurationCommandTests
             It.IsAny<CancellationToken>()),
             Times.Once());
 
-        mediator.Verify(x => x.Publish(It.IsAny<Configuration>(),
+        mediator.Verify(x => x.Publish(It.IsAny<PublishNotificationsEvents>(),
             It.IsAny<CancellationToken>()),
             Times.Never());
 

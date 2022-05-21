@@ -2,6 +2,7 @@
 using System.Net.Mime;
 using Adasit.Bootstrap.Application.Dto;
 using Adasit.Bootstrap.Application.Dto.Models;
+using Adasit.Bootstrap.Application.Dto.Models.Errors;
 using Newtonsoft.Json;
 
 namespace Adasit.Bootstrap.WebApi.Middlewares;

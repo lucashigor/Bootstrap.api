@@ -3,13 +3,13 @@ using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using MediatR;
 
-public static class InfrastructureInitializer
+public static class ApplicationInitializer
 {
     private static readonly Assembly DomainAssembly;
     private static readonly Assembly InfrastructureAssembly;
     private static readonly Assembly ApplicationAssembly;
 
-    static InfrastructureInitializer()
+    static ApplicationInitializer()
     {
         DomainAssembly = AppDomain.CurrentDomain.Load("Adasit.Bootstrap.Domain");
         ApplicationAssembly = AppDomain.CurrentDomain.Load("Adasit.Bootstrap.Application");

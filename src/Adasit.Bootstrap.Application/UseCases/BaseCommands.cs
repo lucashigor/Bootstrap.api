@@ -1,14 +1,13 @@
 ﻿namespace Adasit.Bootstrap.Application.UseCases;
 
-using Adasit.Bootstrap.Application.Dto;
-using Adasit.Bootstrap.Application.Dto.Models;
+using Adasit.Bootstrap.Application.Dto.Models.Errors;
 using Adasit.Bootstrap.Application.Models;
 using Adasit.Bootstrap.Domain.Conts;
 using Adasit.Bootstrap.Domain.Exceptions;
 
 public abstract class BaseCommands
 {
-    public readonly Notifier notifier;
+    public Notifier notifier { get; private set; }
     public BaseCommands(Notifier notifier)
     {
         this.notifier = notifier;
@@ -27,7 +26,7 @@ public abstract class BaseCommands
             message = int.Parse(err[0]) switch
             {
                 (int)ErrorsCodes.Validation => ErrorCodeConstant.Validation(),
-                (int)ErrorsCodes.ConfigurationDateConflit => ErrorCodeConstant.StartDateCannotBeBeforeToToday(),
+                (int)ErrorsCodes.ConfigurationDateConflit => ErrorCodeConstant.StartDateCannotBeBeforeToUtcNow(),
                 _ => ErrorCodeConstant.ErrorOnSavingNewConfiguration()
             };
 

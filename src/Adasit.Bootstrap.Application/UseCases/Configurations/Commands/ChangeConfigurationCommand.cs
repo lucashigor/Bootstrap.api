@@ -1,8 +1,9 @@
 ﻿namespace Adasit.Bootstrap.Application.UseCases.Configurations.Commands;
 using System.Threading;
 using System.Threading.Tasks;
-using Adasit.Bootstrap.Application.Dto;
 using Adasit.Bootstrap.Application.Dto.Models;
+using Adasit.Bootstrap.Application.Dto.Models.Errors;
+using Adasit.Bootstrap.Application.Dto.Models.Events;
 using Adasit.Bootstrap.Application.Dto.Models.Response;
 using Adasit.Bootstrap.Application.Interfaces;
 using Adasit.Bootstrap.Application.Models;
@@ -91,7 +92,7 @@ public class ChangeConfigurationCommand : BaseCommands, IRequestHandler<ModifyCo
                 entity.StartDate,
                 DateTimeOffset.UtcNow);
 
-                await repository.Update(entity, cancellationToken).ConfigureAwait(false);
+                await repository.Update(entity, cancellationToken);
 
                 var newOne = new RegisterConfigurationInput()
                 {
@@ -102,7 +103,7 @@ public class ChangeConfigurationCommand : BaseCommands, IRequestHandler<ModifyCo
                     FinalDate = command.FinalDate
                 };
 
-                ret = await mediator.Send(newOne, cancellationToken).ConfigureAwait(false);
+                ret = await mediator.Send(newOne, cancellationToken);
             }
             else
             {
@@ -112,16 +113,18 @@ public class ChangeConfigurationCommand : BaseCommands, IRequestHandler<ModifyCo
                     command.StartDate,
                     command.FinalDate);
 
-                await dateValidationHandler.Handle(entity, cancellationToken).ConfigureAwait(false);
+                await dateValidationHandler.Handle(entity, cancellationToken);
 
-                await repository.Update(entity, cancellationToken).ConfigureAwait(false);
+                await repository.Update(entity, cancellationToken);
 
                 ret = entity.MapDtoFromDomain();
             }
 
-            await mediator.Publish(entity, cancellationToken).ConfigureAwait(false);
+            var message = new DefaultMessageNotification(EventNames.ConfigurationChanged, entity);
 
-            await unitOfWork.CommitAsync(cancellationToken).ConfigureAwait(false);
+            await mediator.Publish(new PublishNotificationsEvents(TopicNames.Bootstrap_Topic, message), cancellationToken);
+
+            await unitOfWork.CommitAsync(cancellationToken);
 
             return ret;
 

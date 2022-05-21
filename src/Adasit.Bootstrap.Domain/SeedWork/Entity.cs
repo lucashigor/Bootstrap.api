@@ -7,7 +7,6 @@ public abstract class Entity
     public Guid Id { get; private set; }
     public DateTimeOffset CreatedAt { get; private set; }
     public DateTimeOffset? LastUpdateAt { get; protected set; }
-    public DateTimeOffset? DeletedAt { get; protected set; }
 
     protected List<Notification> Notifications { get; private set; }
 

@@ -1,5 +1,5 @@
-﻿using Adasit.Bootstrap.Application.Dto;
-using Adasit.Bootstrap.Application.Dto.Models;
+﻿using Adasit.Bootstrap.Application.Dto.Models;
+using Adasit.Bootstrap.Application.Dto.Models.Errors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Adasit.Bootstrap.WebApi.Extensions;

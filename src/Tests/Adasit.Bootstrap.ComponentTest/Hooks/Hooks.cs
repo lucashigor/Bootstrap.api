@@ -7,6 +7,9 @@ using System.Net.Http;
 using System.Net.Mime;
 using System.Threading.Tasks;
 using Adasit.Bootstrap.Application.Dto.Models;
+using Adasit.Bootstrap.Application.Dto.Models.Errors;
+using Adasit.Bootstrap.Application.Dto.Models.Response;
+using Adasit.Bootstrap.ComponentTest.Utils;
 using Adasit.Bootstrap.Infrastructure.Context;
 using Adasit.Bootstrap.TestsUtil;
 using Adasit.Bootstrap.WebApi;
@@ -14,6 +17,8 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using TechTalk.SpecFlow;
 using WireMock.Matchers;
 using WireMock.RequestBuilders;
@@ -28,12 +33,19 @@ public class Hook : IClassFixture<WebApplicationFactory<Startup>>
     public BaseFixture baseFixture { get; }
     public static WireMockServer WireMockServer { get; set; }
     public static DbContextOptions<PrincipalContext> DbContextOptions { get; set; }
+    public string microserviceName { get; set; }
+
+    public TopicMessageTestHelper message;
 
     public Hook(CustomWebApplicationFactory<Startup> factory)
     {
         this.factory = factory;
 
         this.baseFixture = new();
+
+        this.message = factory.message;
+
+        this.microserviceName = "Bootstrap.Api";
     }
 
     [BeforeTestRun]
@@ -174,7 +186,7 @@ public class Hook : IClassFixture<WebApplicationFactory<Startup>>
 
     public Task<T> GetWithValidations<T>(string url) where T : class
     {
-        return GetWithValidations<T>(url, null, new());
+        return GetWithValidations<T>(url, null!, new());
     }
 
     public async Task<T> GetWithValidations<T>(string url, string code, List<ErrorModel> errorDetails) where T : class
@@ -185,15 +197,15 @@ public class Hook : IClassFixture<WebApplicationFactory<Startup>>
 
         var response = await client.GetAsync(url);
 
-        return await ValidateResponse<T>(code, errorDetails, response);
+        return await ValidateResponse<T>(errorDetails, response);
     }
 
     public Task<T> PostWithValidations<T>(string url, object data) where T : class
     {
-        return PostWithValidations<T>(url, null!, new(), data);
+        return PostWithValidations<T>(url, new(), data);
     }
 
-    public async Task<T> PostWithValidations<T>(string url, string code, List<ErrorModel> errorDetails, object data) where T : class
+    public async Task<T> PostWithValidations<T>(string url, List<ErrorModel> errorDetails, object data) where T : class
     {
         HttpClient client;
         StringContent httpContent;
@@ -204,7 +216,7 @@ public class Hook : IClassFixture<WebApplicationFactory<Startup>>
 
         var response = await client.PostAsync(url, httpContent);
 
-        return await ValidateResponse<T>(code, errorDetails, response);
+        return await ValidateResponse<T>(errorDetails, response);
     }
 
     private static void Body(object data, out StringContent httpContent)
@@ -219,10 +231,17 @@ public class Hook : IClassFixture<WebApplicationFactory<Startup>>
         httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
     }
 
-    private static async Task<T> ValidateResponse<T>(string code, List<ErrorModel> errorDetails, HttpResponseMessage response) where T : class
+    private static async Task<T> ValidateResponse<T>(List<ErrorModel> errorDetails, HttpResponseMessage response) where T : class
     {
+        var json =  new JsonSerializerSettings()
+        {
+            ContractResolver = new CamelCasePropertyNamesContractResolver(),
+            Converters = { new StringEnumConverter() }
+        };
+
         var content = await response.Content.ReadAsStringAsync();
-        var ret = JsonConvert.DeserializeObject<DefaultResponseDto<T>>(content);
+
+        var ret = JsonConvert.DeserializeObject<DefaultResponseDto<T>>(content, json);
 
         ret.Should().NotBeNull();
 

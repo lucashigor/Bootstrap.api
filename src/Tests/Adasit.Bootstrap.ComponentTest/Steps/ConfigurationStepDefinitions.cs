@@ -8,6 +8,8 @@ using Adasit.Bootstrap.ComponentTest.Hooks;
 using Adasit.Bootstrap.WebApi;
 using FluentAssertions;
 using TechTalk.SpecFlow;
+using System.Linq;
+using Adasit.Bootstrap.ComponentTest.Utils;
 
 [Binding]
 public sealed class ConfigurationStepDefinitions : Hook
@@ -44,6 +46,23 @@ public sealed class ConfigurationStepDefinitions : Hook
     [Then(@"the id should not be null")]
     public void ThenTheIdShouldNotBeNull()
     {
-        Result.Id.Should().NotBeEmpty();
+        Result?.Id.Should().NotBeEmpty();
+    }
+
+    [Then(@"the event '(.*)' has to be sended on this topic '(.*)' for this consumer '(.*)'")]
+    public void ThenTheEventHasToBeSendedOnThisTopic(string topicName, 
+        string eventName, 
+        string fileName)
+    {
+        message.list.Should().NotBeNull();
+
+        var obj = message.list.Where(x => x.Name.Equals(topicName))
+            .FirstOrDefault(x => x.Data.EventName.Equals(eventName));
+
+        PactsGenericValidator.EnsureEventApiHonoursPactWithConsumer(
+            microserviceName,
+            eventName,
+            fileName,
+            obj!);
     }
 }

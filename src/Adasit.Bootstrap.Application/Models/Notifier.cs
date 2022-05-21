@@ -1,5 +1,6 @@
 ﻿namespace Adasit.Bootstrap.Application.Models;
-using Adasit.Bootstrap.Application.Dto.Models;
+using Adasit.Bootstrap.Application.Dto.Models.Errors;
+
 public class Notifier
 {
     public Notifier()

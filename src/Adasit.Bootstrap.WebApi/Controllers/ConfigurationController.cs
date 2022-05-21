@@ -1,6 +1,5 @@
 namespace Adasit.Bootstrap.WebApi.Controllers;
 
-using System.Net.Mime;
 using Adasit.Bootstrap.Application.Dto.Models;
 using Adasit.Bootstrap.Application.Dto.Models.Request;
 using Adasit.Bootstrap.Application.Dto.Models.Response;
@@ -12,6 +11,7 @@ using Adasit.Bootstrap.WebApi.Controllers.Base;
 using MediatR;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Mime;
 
 [ApiController]
 [Route("[controller]")]
@@ -32,8 +32,8 @@ public class ConfigurationsController : BaseController
 
     [HttpPost]
     [ProducesResponseType(typeof(DefaultResponseDto<ConfigurationOutputDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(DefaultResponseDto<object>), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(DefaultResponseDto<object>), StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(typeof(DefaultResponseDto<>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(DefaultResponseDto<>), StatusCodes.Status422UnprocessableEntity)]
     public async Task<IActionResult> Create(
         [FromBody] RegisterConfigurationInputDto apiDto,
         CancellationToken cancellationToken
@@ -53,8 +53,8 @@ public class ConfigurationsController : BaseController
 
     [HttpPatch("{id:guid}")]
     [ProducesResponseType(typeof(DefaultResponseDto<ConfigurationOutputDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(DefaultResponseDto<object>), StatusCodes.Status422UnprocessableEntity)]
-    [ProducesResponseType(typeof(DefaultResponseDto<object>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(DefaultResponseDto<>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(DefaultResponseDto<>), StatusCodes.Status422UnprocessableEntity)]
     public async Task<IActionResult> PatchConfiguration(
         [FromBody] JsonPatchDocument<ModifyConfigurationInputDto> apiDto,
         [FromRoute] Guid id,
@@ -64,6 +64,13 @@ public class ConfigurationsController : BaseController
         if(apiDto == null)
         {
             return UnprocessableEntity(new DefaultResponseDto<object>());
+        }
+
+        CheckIdIfIdIsNull(id);
+
+        if (notifier.Erros.Any())
+        {
+            return Result<ConfigurationOutputDto>(null!);
         }
 
         var input = apiDto.MapDtoToInput();
@@ -78,14 +85,21 @@ public class ConfigurationsController : BaseController
     
     [HttpPut("{id:guid}")]
     [ProducesResponseType(typeof(DefaultResponseDto<ConfigurationOutputDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(DefaultResponseDto<object>), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(DefaultResponseDto<object>), StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(typeof(DefaultResponseDto<>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(DefaultResponseDto<>), StatusCodes.Status422UnprocessableEntity)]
     public async Task<IActionResult> Update(
         [FromBody] ModifyConfigurationInputDto apiInput,
         [FromRoute] Guid id,
         CancellationToken cancellationToken
     )
     {
+        CheckIdIfIdIsNull(id);
+
+        if (notifier.Erros.Any())
+        {
+            return Result<ConfigurationOutputDto>(null!);
+        }
+
         var input = new ModifyConfigurationInput(apiInput)
         {
             Id = id
@@ -96,31 +110,45 @@ public class ConfigurationsController : BaseController
         return Result(output);
     }
 
-    /*
-    [HttpGet("{id:guid}")]
-    [ProducesResponseType(typeof(DefaultResponseDto<ConfigurationOutput>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetById(
-        [FromRoute] Guid id,
-        CancellationToken cancellationToken
-    )
-    {
-        var output = await mediator.Send(new GetConfigurationInput(id), cancellationToken);
-        return Ok(new DefaultResponseDto<ConfigurationOutput>(output));
-    }
-
     [HttpDelete("{id:guid}")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(DefaultResponseDto<>),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(DefaultResponseDto<>), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Delete(
         [FromRoute] Guid id,
         CancellationToken cancellationToken
     )
     {
-        await mediator.Send(new DeleteConfigurationInput(id), cancellationToken);
-        return NoContent();
+        CheckIdIfIdIsNull(id);
+
+        if (notifier.Erros.Any())
+        {
+            return Result<ConfigurationOutputDto>(null!);
+        }
+
+        await mediator.Send(new RemoveConfigurationInput(id), cancellationToken);
+
+        return Result<ConfigurationOutputDto>(null!);
     }
-    */
+
+    [HttpGet("{id:guid}")]
+    [ProducesResponseType(typeof(DefaultResponseDto<ConfigurationOutputDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(DefaultResponseDto<>), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetById(
+        [FromRoute] Guid id,
+        CancellationToken cancellationToken
+    )
+    {
+        CheckIdIfIdIsNull(id);
+
+        if (notifier.Erros.Any())
+        {
+            return Result<ConfigurationOutputDto>(null!);
+        }
+
+        var output = await mediator.Send(new GetConfigurationInput(id), cancellationToken);
+
+        return Result(output);
+    }
 
     [HttpGet]
     [ProducesResponseType(typeof(ListConfigurationsOutput), StatusCodes.Status200OK)]
@@ -141,8 +169,6 @@ public class ConfigurationsController : BaseController
         if (dir is not null) input.Dir = dir.Value;
 
         var output = await mediator.Send(input, cancellationToken);
-        return Ok(
-            new DefaultResponseDto<ListConfigurationsOutput>(output)
-        );
+        return Result(output);
     }
 }

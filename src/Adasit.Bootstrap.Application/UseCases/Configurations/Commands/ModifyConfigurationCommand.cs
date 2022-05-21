@@ -3,6 +3,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Adasit.Bootstrap.Application.Dto;
+using Adasit.Bootstrap.Application.Dto.Models.Errors;
 using Adasit.Bootstrap.Application.Dto.Models.Response;
 using Adasit.Bootstrap.Application.Models;
 using Adasit.Bootstrap.Domain.Entity;

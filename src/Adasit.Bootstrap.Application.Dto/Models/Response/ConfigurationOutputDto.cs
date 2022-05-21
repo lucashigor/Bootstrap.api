@@ -9,6 +9,11 @@ public class ConfigurationOutputDto
     public DateTimeOffset StartDate { get; set; }
     public DateTimeOffset FinalDate { get; set; }
 
+    public ConfigurationOutputDto()
+    {
+
+    }
+
     public ConfigurationOutputDto(Guid id, string name, string value, string description, DateTimeOffset startDate, DateTimeOffset finalDate)
     {
         Id = id;

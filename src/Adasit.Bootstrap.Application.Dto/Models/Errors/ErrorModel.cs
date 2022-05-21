@@ -1,19 +1,19 @@
-﻿namespace Adasit.Bootstrap.Application.Dto.Models;
+﻿namespace Adasit.Bootstrap.Application.Dto.Models.Errors;
 
 public class ErrorModel
 {
-    public string Code { get; private set; }
+    public ErrorCodes Code { get; private set; }
     public string Message { get; private set; }
     public string InnerMessage { get; private set; }
 
-    public ErrorModel(string code, string message)
+    public ErrorModel(ErrorCodes code, string message)
     {
         Code = code;
         Message = message;
         InnerMessage = string.Empty;
     }
 
-    public ErrorModel(string code, string message, string innerMessage)
+    public ErrorModel(ErrorCodes code, string message, string innerMessage)
     {
         Code = code;
         Message = message;

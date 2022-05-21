@@ -21,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Adasit.Bootstrap.ComponentT
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Adasit.Bootstrap.UnitTest", "Tests\Adasit.Bootstrap.UnitTest\Adasit.Bootstrap.UnitTest.csproj", "{35DB6F9C-F60E-4DBA-A925-4D5A9BD63F2C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adasit.Bootstrap.TestsUtil", "Tests\Adasit.Bootstrap.TestsUtil\Adasit.Bootstrap.TestsUtil.csproj", "{9879C156-3376-4CDF-ADCA-6F14A55C4F75}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Adasit.Bootstrap.TestsUtil", "Tests\Adasit.Bootstrap.TestsUtil\Adasit.Bootstrap.TestsUtil.csproj", "{9879C156-3376-4CDF-ADCA-6F14A55C4F75}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

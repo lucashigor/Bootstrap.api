@@ -1,6 +1,6 @@
 ﻿using System.Net;
 using System.Net.Mime;
-using Adasit.Bootstrap.Application.Dto.Models;
+using Adasit.Bootstrap.Application.Dto.Models.Errors;
 
 namespace Adasit.Bootstrap.Application.Dto;
 
