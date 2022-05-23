@@ -7,9 +7,6 @@ using Hangfire;
 using Hangfire.MemoryStorage;
 using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.OpenApi.Models;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 
 public class Startup
@@ -57,6 +54,8 @@ public class Startup
             .AddGlobalExceptionHandlerMiddleware()
             .AddInfraServices()
             .AddHttpContextAccessor()
+            .AddServices()
+            .AddHttpClients(Configuration)
             .AddControllers(options =>
             {
                 //options.Filters.Add(typeof(MySampleActionFilter));
@@ -65,7 +64,7 @@ public class Startup
             {
                 options.RegisterValidatorsFromAssemblyContaining<Startup>();
             })
-            .AddNewtonsoftJson(opts => opts.SerializerSettings.Converters.Add(new StringEnumConverter()));
+            .AddNewtonsoftJson(opts => opts.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver());
 
 
         services.Configure<ApiBehaviorOptions>(options =>
@@ -73,18 +72,7 @@ public class Startup
             options.InvalidModelStateResponseFactory = actionContext => actionContext.GetErrorsModelState();
         });
 
-        // Json settings
-        JsonConvert.DefaultSettings = () => new JsonSerializerSettings()
-        {
-            ContractResolver = new CamelCasePropertyNamesContractResolver(),
-            Converters = { new StringEnumConverter() }
-        };
-
-
-        services.AddSwaggerGen(c =>
-        {
-            c.SwaggerDoc("v1", new OpenApiInfo { Title = "AdasIt.Bootstrap.webapi", Version = "v1" });
-        });
+        services.AddSwagger(Configuration);
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -101,7 +89,7 @@ public class Startup
         var options = new DashboardOptions
         {
             Authorization = new[] {
-                    new DashboardAuthorization(new[]
+                new DashboardAuthorization(new[]
                     {
                         new HangfireUserCredentials("user1",  "P@ssw0rd")
                     })

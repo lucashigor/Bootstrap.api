@@ -1,4 +1,4 @@
-﻿namespace Adasit.Bootstrap.Infrastructure.Context;
+﻿namespace Adasit.Bootstrap.Infrastructure.Repositories.Context;
 using Microsoft.EntityFrameworkCore;
 using DomainEntity = Domain.Entity;
 
@@ -16,7 +16,8 @@ public class PrincipalContext : DbContext
         base.OnModelCreating(modelBuilder);
 
         modelBuilder
-            .Entity<DomainEntity.Configuration>((v) => {
+            .Entity<DomainEntity.Configuration>((v) =>
+            {
                 v.HasKey(k => k.Id);
                 v.Property(k => k.Name).HasMaxLength(100);
                 v.Property(k => k.Value).HasMaxLength(1000);

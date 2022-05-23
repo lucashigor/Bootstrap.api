@@ -30,6 +30,11 @@ public class BaseController : ControllerBase
             return BadRequest(responseDto);
         }
 
+        if(model is null && !notifier.Warnings.Any() && !notifier.Erros.Any())
+        {
+            return NoContent();
+        }
+
         return Ok(responseDto);
     }
 

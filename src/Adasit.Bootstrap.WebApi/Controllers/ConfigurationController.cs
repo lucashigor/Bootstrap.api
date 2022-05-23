@@ -8,12 +8,14 @@ using Adasit.Bootstrap.Application.UseCases.Configurations.Commands;
 using Adasit.Bootstrap.Application.UseCases.Configurations.Mappers;
 using Adasit.Bootstrap.Application.UseCases.Configurations.Queries;
 using Adasit.Bootstrap.WebApi.Controllers.Base;
+using Adasit.Bootstrap.WebApi.Filters;
 using MediatR;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 
 [ApiController]
+[Authentication]
 [Route("[controller]")]
 [Produces(MediaTypeNames.Application.Json)]
 [Consumes(MediaTypeNames.Application.Json)]
@@ -112,6 +114,7 @@ public class ConfigurationsController : BaseController
 
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(typeof(DefaultResponseDto<>),StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(DefaultResponseDto<>), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Delete(
         [FromRoute] Guid id,

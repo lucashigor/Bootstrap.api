@@ -11,7 +11,9 @@ public class ConfigurationOutputDto
 
     public ConfigurationOutputDto()
     {
-
+        Name = string.Empty;
+        Value = string.Empty;
+        Description = string.Empty;
     }
 
     public ConfigurationOutputDto(Guid id, string name, string value, string description, DateTimeOffset startDate, DateTimeOffset finalDate)

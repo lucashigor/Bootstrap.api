@@ -22,15 +22,16 @@ public sealed class ConfigurationStepDefinitions : Hook
     public ConfigurationStepDefinitions(CustomWebApplicationFactory<Startup> factory) : base(factory)
     {
         Data = new();
+        Result = new();
     }
 
     [Given("a valid configuration")]
     public void GivenAValidConfiguration()
     {
         Data = new(
-           baseFixture.GetStringRigthSize(3, 100),
-           baseFixture.GetStringRigthSize(3, 1000),
-            baseFixture.GetStringRigthSize(3, 1000),
+           GetStringRigthSize(3, 100),
+           GetStringRigthSize(3, 1000),
+            GetStringRigthSize(3, 1000),
             DateTimeOffset.UtcNow.AddDays(1),
             DateTimeOffset.UtcNow.AddDays(15));
     }

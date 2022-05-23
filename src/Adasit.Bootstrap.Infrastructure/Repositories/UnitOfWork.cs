@@ -1,6 +1,6 @@
-﻿namespace Adasit.Bootstrap.Infrastructure;
+﻿namespace Adasit.Bootstrap.Infrastructure.Repositories;
 using Adasit.Bootstrap.Application.Interfaces;
-using Adasit.Bootstrap.Infrastructure.Context;
+using Adasit.Bootstrap.Infrastructure.Repositories.Context;
 using Microsoft.EntityFrameworkCore;
 
 public class UnitOfWork : IUnitOfWork

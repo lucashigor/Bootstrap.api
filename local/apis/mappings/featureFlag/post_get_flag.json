@@ -1,0 +1,16 @@
+{
+    "request": {
+        "method": "POST",
+        "urlPathPattern": "/infra/featureflag/v1/flags"
+    },
+    "response": {
+        "status": 200,
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "bodyFileName": "featureFlag/post_get_flag.json",
+        "transformers": [
+            "response-template"
+        ]
+    }
+}

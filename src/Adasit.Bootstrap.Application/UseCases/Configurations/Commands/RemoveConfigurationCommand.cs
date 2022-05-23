@@ -2,6 +2,7 @@
 using Adasit.Bootstrap.Application.Dto.Models.Errors;
 using Adasit.Bootstrap.Application.Interfaces;
 using Adasit.Bootstrap.Application.Models;
+using Adasit.Bootstrap.Application.Models.FeatureFlag;
 using Adasit.Bootstrap.Domain.Exceptions;
 using Adasit.Bootstrap.Domain.Repository;
 using MediatR;
@@ -17,24 +18,29 @@ public class RemoveConfigurationInput : IRequest
 
 public class RemoveConfigurationCommand : BaseCommands, IRequestHandler<RemoveConfigurationInput>
 {
-    public IConfigurationRepository repository;
-    public IUnitOfWork unitOfWork;
-    public IDateValidationHandler dateValidationHandler;
+    private readonly IConfigurationRepository repository;
+    private readonly IUnitOfWork unitOfWork;
+    private readonly IFeatureFlagService featureFlagService;
 
     public RemoveConfigurationCommand(IConfigurationRepository repository,
         IUnitOfWork unitOfWork,
         Notifier notifier,
-        IDateValidationHandler dateValidationHandler) : base(notifier)
+        IFeatureFlagService featureFlagService) : base(notifier)
     {
         this.repository = repository;
         this.unitOfWork = unitOfWork;
-        this.dateValidationHandler = dateValidationHandler;
+        this.featureFlagService = featureFlagService;
     }
 
     public async Task<Unit> Handle(RemoveConfigurationInput request, CancellationToken cancellationToken)
     {
         try
         {
+            if (await featureFlagService.IsEnabledAsync("geral", CurrentFeatures.FeatureFlagToTest)) 
+            {
+
+            }
+
             var item = await repository.GetById(request.Id, cancellationToken);
 
             if (item is null)
@@ -43,7 +49,7 @@ public class RemoveConfigurationCommand : BaseCommands, IRequestHandler<RemoveCo
                 return Unit.Value;
             }
 
-            if(item.StartDate > DateTimeOffset.UtcNow && item.FinalDate > DateTimeOffset.UtcNow)
+            if(item.StartDate < DateTimeOffset.UtcNow && item.FinalDate < DateTimeOffset.UtcNow)
             {
                 var err = ErrorCodeConstant.ThisCannotBeDoneOnClosedConfiguration();
 

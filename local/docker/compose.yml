@@ -27,13 +27,24 @@ services:
     image: flyway/flyway
     command: -configFiles=/flyway/conf/flyway.conf -locations=filesystem:/flyway/sql -connectRetries=60 migrate
     volumes:
-      - ../local/database/dev-data:/flyway/sql
-      - ../local/drivers:/flyway/drivers
-      - ../local/database/conf:/flyway/conf
+      - ../database/dev-data:/flyway/sql
+      - ../drivers:/flyway/drivers
+      - ../database/conf:/flyway/conf
     depends_on:
       - adasit-bootstrap-postgres
     networks:
       - adasit-bootstrap-network
+      
+  adasit-bootstrap-wiremock:
+    container_name: adasit-bootstrap-wiremock
+    image: rodolpheche/wiremock
+    ports:
+        - "8080:8080"
+        - "8443:8443"
+    volumes:
+        - ../apis/:/home/wiremock
+    networks:
+        - adasit-bootstrap-network
 
 networks:
   adasit-bootstrap-network:

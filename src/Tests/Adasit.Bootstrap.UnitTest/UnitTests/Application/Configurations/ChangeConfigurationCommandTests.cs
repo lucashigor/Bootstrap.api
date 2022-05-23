@@ -1,12 +1,8 @@
 ﻿namespace Adasit.Bootstrap.UnitTest.UnitTests.Application.Configurations;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Adasit.Bootstrap.Application.Dto.Models.Errors;
 using Adasit.Bootstrap.Application.Dto.Models.Response;
 using Adasit.Bootstrap.Application.Interfaces;
 using Adasit.Bootstrap.Application.Models;
-using Adasit.Bootstrap.Application.Notifications;
 using Adasit.Bootstrap.Application.UseCases.Configurations.Commands;
 using Adasit.Bootstrap.Domain.Conts;
 using Adasit.Bootstrap.Domain.Entity;
@@ -15,6 +11,9 @@ using Adasit.Bootstrap.UnitTest.UnitTests.Domain.Configurations;
 using FluentAssertions;
 using MediatR;
 using Moq;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Xunit;
 
 [Collection(nameof(ConfigurationTestFixture))]
@@ -42,13 +41,15 @@ public class ChangeConfigurationCommandTests
     public async Task HandleChangeConfigurationCommand_HappyPath_Async()
     {
         //Arrange
-        var entity = new ModifyConfigurationInput();
-        entity.Id = Guid.NewGuid();
-        entity.Name = fixture.GetStringRigthSize(5, 100);
-        entity.Value = fixture.GetStringRigthSize(5, 100);
-        entity.Description = fixture.GetStringRigthSize(5, 1000);
-        entity.StartDate = DateTimeOffset.UtcNow.AddDays(10);
-        entity.FinalDate = DateTimeOffset.UtcNow.AddDays(30);
+        var entity = new ModifyConfigurationInput
+        {
+            Id = Guid.NewGuid(),
+            Name = fixture.GetStringRigthSize(5, 100),
+            Value = fixture.GetStringRigthSize(5, 100),
+            Description = fixture.GetStringRigthSize(5, 1000),
+            StartDate = DateTimeOffset.UtcNow.AddDays(10),
+            FinalDate = DateTimeOffset.UtcNow.AddDays(30)
+        };
 
         var app = new ChangeConfigurationCommand(configurationMock.Object,
             unitOfWorkMock.Object,
@@ -131,13 +132,15 @@ public class ChangeConfigurationCommandTests
     public async Task HandleChangeConfigurationCommand_SetToInvalidDomain_Async()
     {
         //Arrange
-        var entity = new ModifyConfigurationInput();
-        entity.Id = Guid.NewGuid();
-        entity.Name = fixture.GetStringRigthSize(1, 2);
-        entity.Value = fixture.GetStringRigthSize(5, 100);
-        entity.Description = fixture.GetStringRigthSize(5, 1000);
-        entity.StartDate = DateTimeOffset.UtcNow.AddDays(10);
-        entity.FinalDate = DateTimeOffset.UtcNow.AddDays(30);
+        ModifyConfigurationInput? entity = new ()
+        {
+            Id = Guid.NewGuid(),
+            Name = fixture.GetStringRigthSize(1, 2),
+            Value = fixture.GetStringRigthSize(5, 100),
+            Description = fixture.GetStringRigthSize(5, 1000),
+            StartDate = DateTimeOffset.UtcNow.AddDays(10),
+            FinalDate = DateTimeOffset.UtcNow.AddDays(30)
+        };
 
         var app = new ChangeConfigurationCommand(configurationMock.Object,
             unitOfWorkMock.Object,
@@ -184,12 +187,14 @@ public class ChangeConfigurationCommandTests
     public async Task HandleChangeConfigurationCommand_FoundClosedNotAllowToUpdateNameValueAndDates_Async()
     {
         //Arrange
-        var entity = new ModifyConfigurationInput();
-        entity.Name = fixture.GetStringRigthSize(3, 100);
-        entity.Value = fixture.GetStringRigthSize(5, 100);
-        entity.Description = fixture.GetStringRigthSize(5, 1000);
-        entity.StartDate = DateTimeOffset.UtcNow.AddDays(10);
-        entity.FinalDate = DateTimeOffset.UtcNow.AddDays(30);
+        var entity = new ModifyConfigurationInput
+        {
+            Name = fixture.GetStringRigthSize(3, 100),
+            Value = fixture.GetStringRigthSize(5, 100),
+            Description = fixture.GetStringRigthSize(5, 1000),
+            StartDate = DateTimeOffset.UtcNow.AddDays(10),
+            FinalDate = DateTimeOffset.UtcNow.AddDays(30)
+        };
 
         var app = new ChangeConfigurationCommand(configurationMock.Object,
             unitOfWorkMock.Object,
@@ -244,8 +249,10 @@ public class ChangeConfigurationCommandTests
     public async Task HandleChangeConfigurationCommand_FoundClosedAllowToUpdateDescription_Async()
     {
         //Arrange
-        var entity = new ModifyConfigurationInput();
-        entity.Description = fixture.GetStringRigthSize(5, 1000);
+        var entity = new ModifyConfigurationInput
+        {
+            Description = fixture.GetStringRigthSize(5, 1000)
+        };
 
         var app = new ChangeConfigurationCommand(configurationMock.Object,
             unitOfWorkMock.Object,
@@ -307,8 +314,10 @@ public class ChangeConfigurationCommandTests
     public async Task HandleChangeConfigurationCommand_FoundInCourseAllowToUpdateDescription_Async()
     {
         //Arrange
-        var entity = new ModifyConfigurationInput();
-        entity.Description = fixture.GetStringRigthSize(5, 1000);
+        var entity = new ModifyConfigurationInput
+        {
+            Description = fixture.GetStringRigthSize(5, 1000)
+        };
 
         var app = new ChangeConfigurationCommand(configurationMock.Object,
             unitOfWorkMock.Object,
@@ -376,9 +385,11 @@ public class ChangeConfigurationCommandTests
     public async Task HandleChangeConfigurationCommand_FoundInCourseCreateAnotherConfigurationWithNewValues_Async()
     {
         //Arrange
-        var entity = new ModifyConfigurationInput();
-        entity.Description = fixture.GetStringRigthSize(5, 1000);
-        entity.Value = fixture.GetStringRigthSize(3, 100);
+        var entity = new ModifyConfigurationInput
+        {
+            Description = fixture.GetStringRigthSize(5, 1000),
+            Value = fixture.GetStringRigthSize(3, 100)
+        };
 
         var app = new ChangeConfigurationCommand(configurationMock.Object,
             unitOfWorkMock.Object,
@@ -465,9 +476,11 @@ public class ChangeConfigurationCommandTests
     public async Task HandleChangeConfigurationCommand_FoundInCourseChangeFinalDateToBeforeToday_Async()
     {
         //Arrange
-        var entity = new ModifyConfigurationInput();
-        entity.Description = fixture.GetStringRigthSize(5, 1000);
-        entity.Name = fixture.GetStringRigthSize(3, 100);
+        var entity = new ModifyConfigurationInput
+        {
+            Description = fixture.GetStringRigthSize(5, 1000),
+            Name = fixture.GetStringRigthSize(3, 100)
+        };
 
         var app = new ChangeConfigurationCommand(configurationMock.Object,
             unitOfWorkMock.Object,
@@ -553,9 +566,11 @@ public class ChangeConfigurationCommandTests
     public async Task HandleChangeConfigurationCommand_FoundInCourseChangeFinalDate_Async()
     {
         //Arrange
-        var entity = new ModifyConfigurationInput();
-        entity.Description = fixture.GetStringRigthSize(5, 1000);
-        entity.Name = fixture.GetStringRigthSize(3, 100);
+        var entity = new ModifyConfigurationInput
+        {
+            Description = fixture.GetStringRigthSize(5, 1000),
+            Name = fixture.GetStringRigthSize(3, 100)
+        };
 
         var app = new ChangeConfigurationCommand(configurationMock.Object,
             unitOfWorkMock.Object,
@@ -636,9 +651,11 @@ public class ChangeConfigurationCommandTests
     public async Task HandleChangeConfigurationCommand_FoundInCourseChangeInitalDateOnConfigInCourse_Async()
     {
         //Arrange
-        var entity = new ModifyConfigurationInput();
-        entity.Description = fixture.GetStringRigthSize(5, 1000);
-        entity.Name = fixture.GetStringRigthSize(3, 100);
+        var entity = new ModifyConfigurationInput
+        {
+            Description = fixture.GetStringRigthSize(5, 1000),
+            Name = fixture.GetStringRigthSize(3, 100)
+        };
 
         var app = new ChangeConfigurationCommand(configurationMock.Object,
             unitOfWorkMock.Object,

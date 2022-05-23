@@ -23,6 +23,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Adasit.Bootstrap.UnitTest",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Adasit.Bootstrap.TestsUtil", "Tests\Adasit.Bootstrap.TestsUtil\Adasit.Bootstrap.TestsUtil.csproj", "{9879C156-3376-4CDF-ADCA-6F14A55C4F75}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adasit.Bootstrap.IntegrationTest", "Tests\Adasit.Bootstrap.IntegrationTest\Adasit.Bootstrap.IntegrationTest.csproj", "{98CD4546-75F7-45B2-8E5D-C019A56D32B6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -65,6 +67,10 @@ Global
 		{9879C156-3376-4CDF-ADCA-6F14A55C4F75}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9879C156-3376-4CDF-ADCA-6F14A55C4F75}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9879C156-3376-4CDF-ADCA-6F14A55C4F75}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98CD4546-75F7-45B2-8E5D-C019A56D32B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98CD4546-75F7-45B2-8E5D-C019A56D32B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98CD4546-75F7-45B2-8E5D-C019A56D32B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98CD4546-75F7-45B2-8E5D-C019A56D32B6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -73,6 +79,7 @@ Global
 		{D47A787D-C38F-4857-9F9E-8895B06CD9C0} = {EFB17BD0-BDB1-11EC-A430-4DDC0461AFA9}
 		{35DB6F9C-F60E-4DBA-A925-4D5A9BD63F2C} = {EFB17BD0-BDB1-11EC-A430-4DDC0461AFA9}
 		{9879C156-3376-4CDF-ADCA-6F14A55C4F75} = {EFB17BD0-BDB1-11EC-A430-4DDC0461AFA9}
+		{98CD4546-75F7-45B2-8E5D-C019A56D32B6} = {EFB17BD0-BDB1-11EC-A430-4DDC0461AFA9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5D9B4654-BFA9-4A0D-B741-8AA2C00FFD17}

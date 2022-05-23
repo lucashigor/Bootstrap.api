@@ -1,45 +1,55 @@
-﻿namespace Adasit.Bootstrap.Infrastructure;
+﻿namespace Adasit.Bootstrap.Infrastructure.Repositories;
 
 using System.Collections.Generic;
 using System.Linq;
 using Adasit.Bootstrap.Domain.Repository;
 using Adasit.Bootstrap.Domain.SeedWork.ShearchableRepository;
-using Adasit.Bootstrap.Infrastructure.Context;
+using Adasit.Bootstrap.Infrastructure.Repositories.Context;
 using Microsoft.EntityFrameworkCore;
 using DomainEntity = Domain.Entity;
+
 public class ConfigurationRepository : IConfigurationRepository
 {
-    private readonly DbSet<DomainEntity.Configuration> dbset;
+    private readonly DbSet<DomainEntity.Configuration> dbSet;
 
     public ConfigurationRepository(PrincipalContext context)
     {
-        dbset = context.Configuration;
+        dbSet = context.Configuration;
     }
 
     public async Task Insert(DomainEntity.Configuration configuration, CancellationToken cancellationToken)
-        => await dbset.AddAsync(configuration, cancellationToken);
+        => await dbSet.AddAsync(configuration, cancellationToken);
 
-    public async Task<DomainEntity.Configuration> GetById(Guid Id, CancellationToken cancellationToken)
-        => await dbset.FirstOrDefaultAsync(x => x.Id == Id, cancellationToken);
+    public Task<DomainEntity.Configuration?> GetById(Guid Id, CancellationToken cancellationToken)
+        => dbSet.FirstOrDefaultAsync(x => x.Id == Id, cancellationToken);
 
-    public Task Update(DomainEntity.Configuration user, CancellationToken cancellationToken)
+    public Task Update(DomainEntity.Configuration configuration, CancellationToken cancellationToken)
     {
-        dbset.Attach(user);
+        dbSet.Attach(configuration);
+        dbSet.Update(configuration);
 
         return Task.CompletedTask;
     }
 
-    public Task Delete(DomainEntity.Configuration user, CancellationToken cancellationToken)
+    public async Task Delete(DomainEntity.Configuration configuration, CancellationToken cancellationToken)
     {
-        dbset.Remove(user);
+        var ids = new object[] 
+        {
+            configuration.Id
+        };
 
-        return Task.CompletedTask;
+        var item = await dbSet.FindAsync(ids, cancellationToken);
+
+        if(item != null)
+        {
+            dbSet.Remove(item);
+        }
     }
 
     public async Task<SearchOutput<DomainEntity.Configuration>> Search(SearchInput input, CancellationToken cancellationToken)
     {
         var toSkip = (input.Page - 1) * input.PerPage;
-        var query = dbset.AsNoTracking();
+        var query = dbSet.AsNoTracking();
 
         query = AddOrderToquery(query, input.OrderBy, input.Order);
         if (!string.IsNullOrWhiteSpace(input.Search))
@@ -69,7 +79,7 @@ public class ConfigurationRepository : IConfigurationRepository
 
     public async Task<List<DomainEntity.Configuration>> GetByName(string name, CancellationToken cancellationToken)
     {
-        var item = await dbset.Where(x => x.Name.Equals(name)).ToListAsync(cancellationToken);
+        var item = await dbSet.Where(x => x.Name.Equals(name)).ToListAsync(cancellationToken);
 
         return item!;
     }

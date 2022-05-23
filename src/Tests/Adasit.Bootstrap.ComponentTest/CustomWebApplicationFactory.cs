@@ -3,7 +3,7 @@ using System;
 using System.Linq;
 using Adasit.Bootstrap.Application.Interfaces;
 using Adasit.Bootstrap.ComponentTest.Utils;
-using Adasit.Bootstrap.Infrastructure.Context;
+using Adasit.Bootstrap.Infrastructure.Repositories.Context;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;

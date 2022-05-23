@@ -1,64 +1,44 @@
 ﻿namespace Adasit.Bootstrap.ComponentTest.Hooks;
 
-using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
-using System.Net.Mime;
-using System.Threading.Tasks;
 using Adasit.Bootstrap.Application.Dto.Models;
 using Adasit.Bootstrap.Application.Dto.Models.Errors;
-using Adasit.Bootstrap.Application.Dto.Models.Response;
 using Adasit.Bootstrap.ComponentTest.Utils;
-using Adasit.Bootstrap.Infrastructure.Context;
 using Adasit.Bootstrap.TestsUtil;
 using Adasit.Bootstrap.WebApi;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading.Tasks;
 using TechTalk.SpecFlow;
-using WireMock.Matchers;
-using WireMock.RequestBuilders;
-using WireMock.ResponseBuilders;
-using WireMock.Server;
 using Xunit;
 
 [Binding]
-public class Hook : IClassFixture<WebApplicationFactory<Startup>>
+public class Hook : BaseFixture, IClassFixture<WebApplicationFactory<Startup>>
 {
-    private CustomWebApplicationFactory<Startup> factory;
-    public BaseFixture baseFixture { get; }
-    public static WireMockServer WireMockServer { get; set; }
-    public static DbContextOptions<PrincipalContext> DbContextOptions { get; set; }
-    public string microserviceName { get; set; }
-
+    private readonly CustomWebApplicationFactory<Startup> factory;
+    public readonly string microserviceName;
     public TopicMessageTestHelper message;
+    public string apiKey;
 
     public Hook(CustomWebApplicationFactory<Startup> factory)
     {
         this.factory = factory;
 
-        this.baseFixture = new();
-
         this.message = factory.message;
 
         this.microserviceName = "Bootstrap.Api";
+        this.apiKey = "836041c5-936a-4978-b3c2-f8e5b8c01445";
     }
 
     [BeforeTestRun]
     public static void BeforeTestRun()
     {
-        if (WireMockServer == null || !WireMockServer.IsStarted)
-        {
-            WireMockServer = WireMockServer.Start(9999);
-        }
-
-        DbContextOptions = new DbContextOptionsBuilder<PrincipalContext>()
-            .UseInMemoryDatabase("IntegrationTestDatabase")
-            .Options;
+        CreateWireMock();
+        CreateDatabase();
     }
 
     [AfterTestRun]
@@ -68,14 +48,9 @@ public class Hook : IClassFixture<WebApplicationFactory<Startup>>
         WireMockServer?.Dispose();
     }
 
-    public void ResetWireMock()
-    {
-        WireMockServer.Reset();
-    }
-
     public HttpClient CreateAuthorizedClient()
     {
-        return CreateAuthorizedClient(null!, null!);
+        return CreateAuthorizedClient(apiKey, null!);
     }
     public HttpClient CreateAuthorizedClient(string token)
     {
@@ -97,99 +72,18 @@ public class Hook : IClassFixture<WebApplicationFactory<Startup>>
 
         if (!string.IsNullOrEmpty(token))
         {
-            client.DefaultRequestHeaders.Add("Authorization", token);
+            client.DefaultRequestHeaders.Add("apiKey", token);
         }
 
         return client;
     }
 
-    public void ResetDatabase()
-    {
-        using PrincipalContext context = new(DbContextOptions);
-        context.Configuration.RemoveRange(context.Configuration);
-        context.SaveChanges();
-
-        context.Configuration.AddRange(new List<Domain.Entity.Configuration>()
-            {
-                new Domain.Entity.Configuration("dfsdfsdfs","dfsdfsdfs fsdfsdfdsfsdfdsfsdfsd","dfsdfsdfs fsdfsdfdsfsdfdsfsdfsd asadasdads",DateTimeOffset.UtcNow.AddDays(1), DateTimeOffset.UtcNow.AddDays(20))
-            }
-        );
-
-        context.SaveChanges();
-    }
-
-    public static IRequestBuilder CreateWiremockRequest(HttpMethod method, string path)
-    {
-        return CreateWiremockRequest(method, path, new Dictionary<string, string>(), null!);
-    }
-
-    public static IRequestBuilder CreateWiremockRequest(HttpMethod method, string path, object body)
-    {
-        return CreateWiremockRequest(method, path, new Dictionary<string, string>(), body);
-    }
-
-    public static IRequestBuilder CreateWiremockRequest(HttpMethod method, string path, Dictionary<string, string> prams)
-    {
-        return CreateWiremockRequest(method, path, prams, null!);
-    }
-    public static IRequestBuilder CreateWiremockRequest(HttpMethod method, string path, Dictionary<string, string> prams, object body)
-    {
-        IRequestBuilder requestBuilder = Request.Create();
-        requestBuilder.WithPath(path);
-
-        foreach (KeyValuePair<string, string> keyValue in prams)
-        {
-            requestBuilder.WithParam(keyValue.Key, keyValue.Value);
-        }
-
-        if (body != null)
-        {
-            var jsonBody = JsonConvert.SerializeObject(body);
-
-            requestBuilder.WithBody(new JsonMatcher(jsonBody));
-        }
-
-        return method.Method switch
-        {
-            "GET" => requestBuilder.UsingGet(),
-            "POST" => requestBuilder.UsingPost(),
-            "PUT" => requestBuilder.UsingPut(),
-            "DELETE" => requestBuilder.UsingDelete(),
-            _ => requestBuilder.UsingAnyMethod()
-        };
-    }
-
-    public static IResponseBuilder CreateWiremockResponse(HttpStatusCode code)
-    {
-        IResponseBuilder responseBuilder = Response.Create();
-        responseBuilder.WithStatusCode(code);
-        responseBuilder.WithHeader("Content-Type", MediaTypeNames.Application.Json);
-
-        return responseBuilder;
-    }
-
-    public static IResponseBuilder CreateWiremockResponse(HttpStatusCode code, object body)
-    {
-        IResponseBuilder responseBuilder = CreateWiremockResponse(code);
-
-        responseBuilder.WithBodyAsJson(body);
-
-        return responseBuilder;
-    }
-
-    public void RegisterWiremockResponse(IRequestBuilder request, IResponseBuilder response)
-    {
-        WireMockServer
-            .Given(request)
-            .RespondWith(response);
-    }
-
     public Task<T> GetWithValidations<T>(string url) where T : class
     {
-        return GetWithValidations<T>(url, null!, new());
+        return GetWithValidations<T>(url, new());
     }
 
-    public async Task<T> GetWithValidations<T>(string url, string code, List<ErrorModel> errorDetails) where T : class
+    public async Task<T> GetWithValidations<T>(string url, List<ErrorModel> errorDetails) where T : class
     {
         HttpClient client;
 
@@ -208,11 +102,10 @@ public class Hook : IClassFixture<WebApplicationFactory<Startup>>
     public async Task<T> PostWithValidations<T>(string url, List<ErrorModel> errorDetails, object data) where T : class
     {
         HttpClient client;
-        StringContent httpContent;
 
         client = CreateAuthorizedClient();
 
-        Body(data, out httpContent);
+        Body(data, out StringContent httpContent);
 
         var response = await client.PostAsync(url, httpContent);
 
@@ -245,17 +138,8 @@ public class Hook : IClassFixture<WebApplicationFactory<Startup>>
 
         ret.Should().NotBeNull();
 
-        Assert.Equal(errorDetails, ret.Errors);
+        Assert.Equal(errorDetails, ret?.Errors);
 
-        return ret.Data;
-    }
-
-    public void MockFeatureFlag(string ret)
-    {
-        var response = new DefaultResponseDto<string>(ret);
-
-        RegisterWiremockResponse(
-            CreateWiremockRequest(HttpMethod.Post, "/infra/featureflags/v1/flags"),
-            CreateWiremockResponse(HttpStatusCode.OK, response));
+        return ret?.Data!;
     }
 }

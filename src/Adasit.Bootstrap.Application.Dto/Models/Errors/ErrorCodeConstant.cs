@@ -4,6 +4,8 @@ using Adasit.Bootstrap.Application.Dto.Models;
 public static class ErrorCodeConstant
 {
     public static ErrorModel Generic() => new(ErrorCodes.Generic, "Unfortunately an error occurred during the processing.");
+    public static ErrorModel UnavailableFeatureFlag() => new(ErrorCodes.UnavailableFeatureFlag, "Unavailable FeatureFlag.");
+    public static ErrorModel ClientHttp() => new(ErrorCodes.ClientHttp, "Client Http error.");
     public static ErrorModel Validation() => new(ErrorCodes.Validation, "Unfortunately your request do not pass in our validation process.");
     public static ErrorModel ErrorOnSavingNewConfiguration() => new(ErrorCodes.ErrorOnSavingNewConfiguration, "Unfortunately an error occorred when saving the Configuration.");
     public static ErrorModel NotificationValuesError() => new(ErrorCodes.NotificationValuesError, "Error on creating a notification.");

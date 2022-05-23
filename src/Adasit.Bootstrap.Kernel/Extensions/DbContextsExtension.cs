@@ -2,8 +2,8 @@
 
 using Adasit.Bootstrap.Application.Interfaces;
 using Adasit.Bootstrap.Domain.Repository;
-using Adasit.Bootstrap.Infrastructure;
-using Adasit.Bootstrap.Infrastructure.Context;
+using Adasit.Bootstrap.Infrastructure.Repositories;
+using Adasit.Bootstrap.Infrastructure.Repositories.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
